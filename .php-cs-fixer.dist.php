@@ -3,6 +3,9 @@
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude('var')
+    ->exclude('vendor')
+    ->exclude('tests')
+    ->exclude('config')
 ;
 
 return (new PhpCsFixer\Config())

@@ -32,7 +32,7 @@ fixtures:
 
 
 test:
-	docker compose exec siroko_code_challenge_php php bin/phpunit --testdox
+	docker exec -it siroko_code_challenge_php php vendor/bin/phpunit  --testdox
 
 
 openapi:
