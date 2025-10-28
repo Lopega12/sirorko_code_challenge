@@ -25,4 +25,4 @@
 phpstan.neon
 ###< phpstan/phpstan ###
 /captainhook.config.json
-.idea/*
+/.idea/*
