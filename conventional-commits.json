@@ -1,0 +1,26 @@
+{
+    "typeCase": "kebab",
+    "types": [
+        "build",
+        "chore",
+        "ci",
+        "docs",
+        "feat",
+        "fix",
+        "perf",
+        "refactor",
+        "revert",
+        "security",
+        "style",
+        "test",
+        "merge"
+    ],
+    "scopeCase": "kebab",
+    "scopeRequired": false,
+    "scopes": [],
+    "descriptionCase": null,
+    "descriptionEndMark": "",
+    "bodyRequired": false,
+    "bodyWrapWidth": 72,
+    "requiredFooters": []
+}

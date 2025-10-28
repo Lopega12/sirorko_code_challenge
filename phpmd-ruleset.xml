@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Symfony DDD phpmd ruleset"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>
+        Ruleset adaptado a Symfony + DDD: baja fricción, sin ruido de Laravel.
+    </description>
+
+    <!-- EXCLUSIONES COMUNES -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>var/*</exclude-pattern>
+    <exclude-pattern>public/index.php</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
+    <exclude-pattern>src/*/tests</exclude-pattern>
+    <exclude-pattern>migrations/*</exclude-pattern>
+    <!-- Si usas Doctrine migrations en /src/Infrastructure/Persistence/Doctrine/Migrations -->
+    <exclude-pattern>src/Infrastructure/Persistence/Doctrine/Migrations/*</exclude-pattern>
+
+    <!-- LIMPIEZA DE CÓDIGO -->
+    <rule ref="rulesets/cleancode.xml">
+        <!-- En Symfony a veces se permite acceso estático en bootstraps -->
+        <exclude name="StaticAccess" />
+    </rule>
+
+    <!-- TAMAÑO / COMPLEJIDAD -->
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity" />
+    <rule ref="rulesets/codesize.xml/NPathComplexity" />
+    <rule ref="rulesets/codesize.xml/ExcessiveMethodLength" />
+    <rule ref="rulesets/codesize.xml/ExcessiveClassLength" />
+    <rule ref="rulesets/codesize.xml/ExcessiveParameterList" />
+    <rule ref="rulesets/codesize.xml/ExcessivePublicCount" />
+    <rule ref="rulesets/codesize.xml/TooManyFields" />
+    <rule ref="rulesets/codesize.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="30" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity" />
+
+    <!-- CONTROVERSIALES -->
+    <rule ref="rulesets/controversial.xml" />
+
+    <!-- DISEÑO -->
+    <rule ref="rulesets/design.xml">
+        <!-- En DDD puede haber acoplamientos legítimos (Handlers/Repos/DTOs) -->
+        <exclude name="CouplingBetweenObjects" />
+    </rule>
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects">
+        <properties>
+            <!-- Ligeramente permisivo para Aggregates/Handlers -->
+            <property name="maximum" value="25" />
+        </properties>
+    </rule>
+
+    <!-- NOMBRADO -->
+    <rule ref="rulesets/naming.xml">
+        <exclude name="LongClassName" />
+        <exclude name="ShortVariable" />
+        <exclude name="LongVariable" />
+        <exclude name="ShortMethodName" />
+    </rule>
+
+    <!-- LongClassName ajustada a sufijos de Symfony/DDD -->
+    <rule ref="rulesets/naming.xml/LongClassName" since="2.9"
+          class="PHPMD\Rule\Naming\LongClassName">
+        <properties>
+            <property name="maximum" value="60" />
+            <property name="subtract-suffixes"
+                      value="Controller,CommandHandler,QueryHandler,EventHandler,Repository,RepositoryInterface,Entity,ValueObject,DTO,Request,Response,Exception,Interface,Factory,Specification" />
+        </properties>
+    </rule>
+
+    <!-- LongVariable con sufijos usados en DDD -->
+    <rule ref="rulesets/naming.xml/LongVariable" since="0.2"
+          class="PHPMD\Rule\Naming\LongVariable">
+        <properties>
+            <property name="maximum" value="60" />
+            <property name="subtract-suffixes"
+                      value="DTO,Entity,Repository,Interface,Factory,Specification,Request,Response" />
+        </properties>
+    </rule>
+
+    <!-- ShortVariable: permite id, i/j, etc. -->
+    <rule ref="rulesets/naming.xml/ShortVariable" since="0.2"
+          class="PHPMD\Rule\Naming\ShortVariable">
+        <priority>3</priority>
+        <properties>
+            <property name="minimum" value="3" />
+            <property name="exceptions" value="id,pk,iv,i,j,k,v,e,f,fp" />
+        </properties>
+    </rule>
+
+    <!-- ShortMethodName: permite 'up' en migraciones y métodos cortos típicos -->
+    <rule ref="rulesets/naming.xml/ShortMethodName" since="0.2"
+          class="PHPMD\Rule\Naming\ShortMethodName">
+        <priority>3</priority>
+        <properties>
+            <property name="minimum" value="2" />
+            <property name="exceptions" value="up,io,to,of" />
+        </properties>
+    </rule>
+
+    <!-- UNUSED CODE -->
+    <rule ref="rulesets/unusedcode.xml">
+        <exclude name="UnusedFormalParameter" />
+    </rule>
+</ruleset>

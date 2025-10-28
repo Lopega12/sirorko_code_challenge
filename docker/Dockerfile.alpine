@@ -1,0 +1,33 @@
+FROM php:8.3-fpm-alpine
+
+
+# Dependencias del sistema
+RUN apk add --no-cache \
+git unzip icu-dev libzip-dev oniguruma-dev \
+mariadb-client bash \
+&& docker-php-ext-install intl opcache zip pdo pdo_mysql \
+&& pecl install redis \
+&& docker-php-ext-enable redis
+
+
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+
+# PHP config
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-overrides.ini
+
+
+WORKDIR /var/www/html
+
+
+# Xdebug opcional
+ARG WITH_XDEBUG=false
+RUN if [ "$WITH_XDEBUG" = "true" ]; then \
+apk add --no-cache autoconf g++ make \
+&& pecl install xdebug \
+&& docker-php-ext-enable xdebug \
+; fi
+
+
+CMD ["php-fpm"]
