@@ -3,3 +3,9 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+
+health_routes:
+    resource: ../src/Health/routes.php
+    type: php
+    prefix: /api
