@@ -94,10 +94,15 @@ final class Product
         $this->touch();
     }
 
-    public function setPrice(Money $price): void
+    public function setPrice($price): void
     {
-        $this->price = (string) number_format($price->amount(), 2, '.', '');
-        $this->currency = $price->currency();
+        $this->price = (float) $price;
+        $this->touch();
+    }
+
+    public function setCurrency($currency): void
+    {
+        $this->currency = $currency;
         $this->touch();
     }
 

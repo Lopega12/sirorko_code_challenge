@@ -18,9 +18,8 @@ final class CreateProductTest extends BaseWebTestCase
             'stock' => 5,
         ];
 
-        $client->request('POST', '/api/products', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $client->request('POST', '/api/products/', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
 
-        // server may respond with 201 (created) or validation/auth codes; avoid deprecated assertContains
         $this->assertContainsEquals($client->getResponse()->getStatusCode(), [201, 400, 401]);
 
         if ($client->getResponse()->getStatusCode() === 201) {

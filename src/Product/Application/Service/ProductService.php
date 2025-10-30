@@ -4,7 +4,6 @@ namespace App\Product\Application\Service;
 
 use App\Product\Domain\Entity\Product;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
-use App\Product\Domain\ValueObject\Money;
 
 final class ProductService
 {
@@ -17,8 +16,7 @@ final class ProductService
 
     public function create(string $sku, string $name, float $price, string $currency, int $stock = 0, ?string $description = null): Product
     {
-        $money = new Money($price, $currency);
-        $product = new Product($sku, $name, $money, $stock, $description);
+        $product = new Product($sku, $name, $price, $currency, $stock, $description);
         $this->repo->save($product);
 
         return $product;
@@ -34,8 +32,11 @@ final class ProductService
             $product->setDescription($data['description'] ?? null);
         }
 
-        if (isset($data['price']) && isset($data['currency'])) {
-            $product->setPrice(new Money((float) $data['price'], (string) $data['currency']));
+        if (isset($data['price'])) {
+            $product->setPrice($data['price']);
+        }
+        if (isset($data['currency'])) {
+            $product->setCurrency((string) $data['currency']);
         }
 
         if (isset($data['stock'])) {
