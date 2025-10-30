@@ -2,8 +2,7 @@
 
 namespace App\Auth\Application\Http\Controller;
 
-use App\Auth\Domain\RevokedToken;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Auth\Application\Security\TokenRevokerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 #[AsController]
 final class LogoutController
 {
-    public function __construct(private ManagerRegistry $doctrine, private TokenStorageInterface $tokenStorage)
+    public function __construct(private TokenRevokerInterface $revoker, private TokenStorageInterface $tokenStorage)
     {
     }
 
@@ -44,11 +43,7 @@ final class LogoutController
                 $jti = $payload['jti'] ?? null;
                 $exp = isset($payload['exp']) ? (int) $payload['exp'] : null;
                 if ($jti && $exp) {
-                    $expiresAt = (new \DateTimeImmutable())->setTimestamp($exp);
-                    $revoked = new RevokedToken($jti, $expiresAt);
-                    $em = $this->doctrine->getManager();
-                    $em->persist($revoked);
-                    $em->flush();
+                    $this->revoker->revokeByJti($jti, $exp);
                 }
             }
         }

@@ -31,3 +31,17 @@ services:
             $secret: '%env(APP_SECRET)%'
         public: false
         tags: []
+
+    App\Auth\Application\Security\JwtTokenGenerator:
+        arguments:
+            $secret: '%env(APP_SECRET)%'
+        public: false
+
+    App\Auth\Application\Security\TokenGeneratorInterface: '@App\Auth\Application\Security\JwtTokenGenerator'
+
+    App\Auth\Application\Security\DbTokenRevoker:
+        arguments:
+            $doctrine: '@doctrine'
+        public: false
+
+    App\Auth\Application\Security\TokenRevokerInterface: '@App\Auth\Application\Security\DbTokenRevoker'
