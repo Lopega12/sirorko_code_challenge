@@ -2,27 +2,21 @@
 
 namespace App\Tests\Auth\Integration;
 
+use App\Tests\Factory\UserFactory;
 use App\Tests\TestCase\BaseWebTestCase;
 
 final class LogoutRevocationTest extends BaseWebTestCase
 {
     public function testLogoutPersistsRevokedJti(): void
     {
-        $client = static::createClient();
-
-        // Login to get token
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'admin@example.com',
-            'password' => 'admin123',
-        ]));
-
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('token', $data);
-        $token = $data['token'];
-
+        $client = $this->createAuthenticatedClient(true);
+        //obtain token from client
+       $token =  $client->getServerParameter('HTTP_AUTHORIZATION', function ($header) use (&$token) {
+            $token = str_replace('Bearer ', '', $header);
+            return $token;
+        });
         // Logout with token
-        $client->request('POST', '/api/logout', [], [], ['HTTP_AUTHORIZATION' => 'Bearer ' . $token]);
+        $client->request('POST', '/api/logout', [], []);
         $this->assertSame(204, $client->getResponse()->getStatusCode());
 
         // Extract jti from token and check DB
