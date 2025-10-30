@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Auth\Domain\User;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 use function Zenstruck\Foundry\faker;
 
@@ -13,7 +14,7 @@ final class UserFactory extends PersistentObjectFactory
     {
         return [
             'email' => faker()->unique()->safeEmail(),
-            'password' => password_hash('password123', PASSWORD_BCRYPT),
+            'passwordHash' => password_hash('password123', PASSWORD_BCRYPT),
             'roles' => ['ROLE_USER'],
         ];
     }
