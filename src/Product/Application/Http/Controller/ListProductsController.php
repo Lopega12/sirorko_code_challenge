@@ -5,7 +5,9 @@ namespace App\Product\Application\Http\Controller;
 use App\Product\Application\Service\ProductService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 
+#[AsController]
 final class ListProductsController
 {
     public function __construct(private ProductService $service)
