@@ -1,0 +1,44 @@
+# .gitattributes - normalize line endings and mark binary files
+# Default: let git handle text files automatically
+* text=auto eol=lf
+
+# Force LF for source and text files used in this project
+*.php text eol=lf
+*.inc text eol=lf
+*.phtml text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.md text eol=lf
+*.env text eol=lf
+*.sh text eol=lf
+*.twig text eol=lf
+
+# Composer and Docker files
+composer.lock text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+
+# Mark common binary files as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+
+# Ensure editor and CI don't try to change permissions
+* text=auto
+
