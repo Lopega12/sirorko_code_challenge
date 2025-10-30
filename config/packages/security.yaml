@@ -19,10 +19,13 @@ security:
         check_path: /api/login
         username_path: email
         password_path: password
+      custom_authenticators:
+        - App\Auth\Security\JwtAuthenticator
       lazy: true
       stateless: false
 
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
     - { path: ^/api/health, roles: PUBLIC_ACCESS }
+    - { path: ^/api/doc, roles: PUBLIC_ACCESS }
     - { path: ^/api, roles: ROLE_USER }

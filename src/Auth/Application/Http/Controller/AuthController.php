@@ -5,6 +5,7 @@ namespace App\Auth\Application\Http\Controller;
 use App\Auth\Application\Http\DTO\LoginRequest;
 use App\Auth\Domain\User;
 use App\Auth\Repository\UserRepository;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,6 +73,7 @@ final class AuthController
             'email' => $user->getEmail(),
             'iat' => $now,
             'exp' => $now + $ttl,
+            'jti' => Uuid::uuid4()->toString(),
         ];
 
         $base64UrlEncode = function (string $data): string {
