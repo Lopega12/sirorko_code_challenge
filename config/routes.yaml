@@ -9,3 +9,8 @@ health_routes:
     resource: ../src/Health/routes.php
     type: php
     prefix: /api
+
+auth_routes:
+    resource: ../src/Auth/routes.php
+    type: php
+    prefix: /api
