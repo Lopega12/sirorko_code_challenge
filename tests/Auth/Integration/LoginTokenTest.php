@@ -13,7 +13,8 @@ final class LoginTokenTest extends BaseWebTestCase
 
         $response = $client->getResponse();
         $this->assertNotNull($response);
-        $this->assertContains($response->getStatusCode(), [200, 401, 400]);
+        // allow multiple acceptable status codes; avoid deprecated assertContains
+        $this->assertContainsEquals($response->getStatusCode(), [200, 401, 400]);
 
         if ($response->getStatusCode() === 200) {
             $data = json_decode($response->getContent(), true);

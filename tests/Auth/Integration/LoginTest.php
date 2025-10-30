@@ -11,6 +11,7 @@ final class LoginTest extends BaseWebTestCase
         $client = static::createClient();
         $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['email' => 'integration@example.com', 'password' => 'password123']));
 
-        $this->assertContains($client->getResponse()->getStatusCode(), [200, 401, 400]);
+        // Allow multiple acceptable status codes; avoid deprecated assertContains
+        $this->assertContainsEquals($client->getResponse()->getStatusCode(), [200, 401, 400]);
     }
 }

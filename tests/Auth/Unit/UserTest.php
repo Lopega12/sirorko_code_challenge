@@ -14,8 +14,8 @@ final class UserTest extends TestCase
 
         $this->assertSame($email, $user->getUserIdentifier());
         $roles = $user->getRoles();
-        $this->assertContains('ROLE_USER', $roles);
+        // Use assertContainsEquals to avoid PHPUnit deprecation for array membership
+        $this->assertContainsEquals('ROLE_USER', $roles);
         $this->assertIsString($user->getId());
     }
 }
-
