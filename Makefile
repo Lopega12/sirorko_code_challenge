@@ -24,7 +24,7 @@ composer:
 
 
 migrate:
-	docker compose exec siroko_code_challenge_php php bin/console doctrine:migrations:migrate -n
+	docker exec -it siroko_code_challenge_php php bin/console doctrine:migrations:migrate
 
 
 fixtures:
