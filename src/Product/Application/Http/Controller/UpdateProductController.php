@@ -7,8 +7,10 @@ use App\Product\Domain\Repository\ProductRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[AsController]
 final class UpdateProductController
 {
     public function __construct(private ProductService $service, private ProductRepositoryInterface $repo)

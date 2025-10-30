@@ -6,8 +6,10 @@ use App\Product\Application\Service\ProductService;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[AsController]
 final class DeleteProductController
 {
     public function __construct(private ProductService $service, private ProductRepositoryInterface $repo)
