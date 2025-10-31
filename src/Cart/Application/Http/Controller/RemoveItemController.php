@@ -6,6 +6,7 @@ use App\Cart\Application\Command\RemoveItemFromCartCommand;
 use App\Cart\Application\Handler\RemoveItemFromCartHandler;
 use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Domain\ProductId;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +39,31 @@ final class RemoveItemController
         return $this->cartRepository;
     }
 
+    #[OA\Delete(
+        path: '/api/cart/items/{productId}',
+        summary: 'Eliminar producto del carrito',
+        description: 'Elimina completamente un producto del carrito',
+        security: [['bearerAuth' => []]],
+        tags: ['Cart'],
+        parameters: [
+            new OA\Parameter(
+                name: 'productId',
+                in: 'path',
+                required: true,
+                description: 'ID del producto a eliminar',
+                schema: new OA\Schema(type: 'string', example: 'prod-123')
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: 'Producto eliminado',
+            ),
+            new OA\Response(response: 400, description: 'Datos inválidos'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'Acceso denegado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $cartId = $request->attributes->get('cartId') ?? $request->query->get('cart_id');

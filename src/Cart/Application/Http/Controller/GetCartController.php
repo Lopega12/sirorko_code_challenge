@@ -7,6 +7,7 @@ use App\Cart\Application\Exception\InvalidCartIdException;
 use App\Cart\Application\Exception\UnauthorizedCartAccessException;
 use App\Cart\Application\Service\CartResolver;
 use App\Cart\Application\Service\CartSerializer;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,43 @@ final class GetCartController
         $this->serializer = $serializer;
     }
 
+    #[OA\Get(
+        path: '/api/cart/',
+        summary: 'Obtener carrito',
+        description: 'Obtiene el carrito del usuario autenticado con todos sus items',
+        security: [['bearerAuth' => []]],
+        tags: ['Cart'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Carrito obtenido exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'id', type: 'string', example: 'cart-123'),
+                        new OA\Property(property: 'userId', type: 'string', example: 'user-456', nullable: true),
+                        new OA\Property(
+                            property: 'items',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'product_id', type: 'string', example: 'prod-789'),
+                                    new OA\Property(property: 'name', type: 'string', example: 'Product Name'),
+                                    new OA\Property(property: 'price', type: 'number', format: 'float', example: 99.99),
+                                    new OA\Property(property: 'quantity', type: 'integer', example: 2),
+                                    new OA\Property(property: 'subtotal', type: 'number', format: 'float', example: 199.98),
+                                ]
+                            )
+                        ),
+                        new OA\Property(property: 'total', type: 'number', format: 'float', example: 199.98),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'ID de carrito inválido'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'Acceso no autorizado al carrito'),
+            new OA\Response(response: 404, description: 'Carrito no encontrado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $cartId = $request->attributes->get('cartId') ?? $request->query->get('cart_id');

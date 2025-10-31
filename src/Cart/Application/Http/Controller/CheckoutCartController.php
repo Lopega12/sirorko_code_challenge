@@ -5,6 +5,7 @@ namespace App\Cart\Application\Http\Controller;
 use App\Cart\Application\Command\CheckoutCartCommand;
 use App\Cart\Application\Handler\CheckoutCartHandler;
 use App\Cart\Domain\Port\CartRepositoryInterface;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,27 @@ final class CheckoutCartController
         return $this->cartRepository;
     }
 
+    #[OA\Post(
+        path: '/api/cart/checkout',
+        summary: 'Realizar checkout del carrito',
+        description: 'Convierte el carrito en una orden y procesa el pago de forma asíncrona',
+        security: [['bearerAuth' => []]],
+        tags: ['Cart'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Checkout iniciado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'order_id', type: 'string', example: 'order-123'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'Carrito vacío o datos inválidos'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'Acceso denegado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $cartId = $request->attributes->get('cartId') ?? $request->query->get('cart_id');

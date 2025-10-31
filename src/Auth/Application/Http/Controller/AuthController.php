@@ -5,6 +5,7 @@ namespace App\Auth\Application\Http\Controller;
 use App\Auth\Application\Http\DTO\LoginRequest;
 use App\Auth\Application\Security\TokenGeneratorInterface;
 use App\Auth\Repository\UserRepository;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,38 @@ final class AuthController
     {
     }
 
+    #[OA\Post(
+        path: '/api/login',
+        summary: 'Login de usuario',
+        description: 'Autentica un usuario y devuelve un JWT token',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'password'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123'),
+                ]
+            )
+        ),
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Login exitoso',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGc...'),
+                        new OA\Property(property: 'token_type', type: 'string', example: 'Bearer'),
+                        new OA\Property(property: 'expires_in', type: 'integer', example: 3600),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'Payload inválido'),
+            new OA\Response(response: 401, description: 'Credenciales inválidas'),
+            new OA\Response(response: 429, description: 'Demasiados intentos de login'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $dto = LoginRequest::fromRequest($request);

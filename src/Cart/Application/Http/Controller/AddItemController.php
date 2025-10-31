@@ -6,6 +6,7 @@ use App\Cart\Application\Command\AddItemToCartCommand;
 use App\Cart\Application\Handler\AddItemToCartHandler;
 use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Domain\ProductId;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +39,37 @@ final class AddItemController
         return $this->cartRepository;
     }
 
+    #[OA\Post(
+        path: '/api/cart/items',
+        summary: 'Agregar producto al carrito',
+        description: 'Agrega un producto al carrito del usuario autenticado',
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['product_id'],
+                properties: [
+                    new OA\Property(property: 'product_id', type: 'string', example: 'prod-123'),
+                    new OA\Property(property: 'quantity', type: 'integer', example: 2),
+                ]
+            )
+        ),
+        tags: ['Cart'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Producto agregado al carrito',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'string', example: 'ok'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'Datos inválidos'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'Acceso denegado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $cartId = $request->attributes->get('cartId') ?? $request->query->get('cart_id');
