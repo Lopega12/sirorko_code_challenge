@@ -4,31 +4,33 @@ namespace App\Cart\Application\Http\Controller;
 
 use App\Cart\Application\Command\RemoveItemFromCartCommand;
 use App\Cart\Application\Handler\RemoveItemFromCartHandler;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Domain\ProductId;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+#[AsController]
 final class RemoveItemController
 {
     use ResolveCartTrait;
 
     private RemoveItemFromCartHandler $handler;
-    private Security $security;
+    private TokenStorageInterface $tokenStorage;
     private CartRepositoryInterface $cartRepository;
 
-    public function __construct(RemoveItemFromCartHandler $handler, Security $security, CartRepositoryInterface $cartRepository)
+    public function __construct(RemoveItemFromCartHandler $handler, TokenStorageInterface $tokenStorage, CartRepositoryInterface $cartRepository)
     {
         $this->handler = $handler;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
         $this->cartRepository = $cartRepository;
     }
 
-    protected function getSecurity(): Security
+    protected function getTokenStorage(): TokenStorageInterface
     {
-        return $this->security;
+        return $this->tokenStorage;
     }
 
     protected function getCartRepository(): CartRepositoryInterface

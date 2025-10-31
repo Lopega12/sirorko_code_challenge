@@ -4,31 +4,33 @@ namespace App\Cart\Application\Http\Controller;
 
 use App\Cart\Application\Command\UpdateItemQuantityCommand;
 use App\Cart\Application\Handler\UpdateItemQuantityHandler;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Domain\ProductId;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+#[AsController]
 final class UpdateItemController
 {
     use ResolveCartTrait;
 
     private UpdateItemQuantityHandler $handler;
-    private Security $security;
+    private TokenStorageInterface $tokenStorage;
     private CartRepositoryInterface $cartRepository;
 
-    public function __construct(UpdateItemQuantityHandler $handler, Security $security, CartRepositoryInterface $cartRepository)
+    public function __construct(UpdateItemQuantityHandler $handler, TokenStorageInterface $tokenStorage, CartRepositoryInterface $cartRepository)
     {
         $this->handler = $handler;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
         $this->cartRepository = $cartRepository;
     }
 
-    protected function getSecurity(): Security
+    protected function getTokenStorage(): TokenStorageInterface
     {
-        return $this->security;
+        return $this->tokenStorage;
     }
 
     protected function getCartRepository(): CartRepositoryInterface
@@ -45,7 +47,7 @@ final class UpdateItemController
             $userId = $this->resolveUserIdFromParamInternal($cartId);
 
             $data = json_decode($request->getContent(), true);
-            $quantity = (int) ($data['quantity'] ?? 1);
+            $quantity = (int) ($data['quantity'] ?? 0);
             if ($quantity < 0) {
                 return new JsonResponse(['error' => 'quantity must be >= 0'], Response::HTTP_BAD_REQUEST);
             }

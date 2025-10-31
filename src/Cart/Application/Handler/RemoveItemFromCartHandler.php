@@ -4,7 +4,7 @@ namespace App\Cart\Application\Handler;
 
 use App\Cart\Application\Command\RemoveItemFromCartCommand;
 use App\Cart\Domain\Cart;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 
 final class RemoveItemFromCartHandler
 {

@@ -1,6 +1,6 @@
 <?php
 
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Infrastructure\DoctrineCartRepository;
 use App\Cart\Infrastructure\InMemoryCartRepository;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;

@@ -8,7 +8,7 @@ use App\Cart\Application\Http\Controller\UpdateItemController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return function (RoutingConfigurator $routes): void {
-    // Active routes that do NOT require cartId; controller will resolve cart by token
+    // Las rutas actuales no llevan el id del carrito, esta preparado para pasarle el id del carrito por query string en la url.
     $routes->add('api_cart_get', '/')
         ->controller(GetCartController::class)
         ->methods(['GET']);

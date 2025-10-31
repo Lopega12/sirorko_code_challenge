@@ -4,30 +4,32 @@ namespace App\Cart\Application\Http\Controller;
 
 use App\Cart\Application\Command\CheckoutCartCommand;
 use App\Cart\Application\Handler\CheckoutCartHandler;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+#[AsController]
 final class CheckoutCartController
 {
     use ResolveCartTrait;
 
     private CheckoutCartHandler $handler;
-    private Security $security;
+    private TokenStorageInterface $tokenStorage;
     private CartRepositoryInterface $cartRepository;
 
-    public function __construct(CheckoutCartHandler $handler, Security $security, CartRepositoryInterface $cartRepository)
+    public function __construct(CheckoutCartHandler $handler, TokenStorageInterface $tokenStorage, CartRepositoryInterface $cartRepository)
     {
         $this->handler = $handler;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
         $this->cartRepository = $cartRepository;
     }
 
-    protected function getSecurity(): Security
+    protected function getTokenStorage(): TokenStorageInterface
     {
-        return $this->security;
+        return $this->tokenStorage;
     }
 
     protected function getCartRepository(): CartRepositoryInterface

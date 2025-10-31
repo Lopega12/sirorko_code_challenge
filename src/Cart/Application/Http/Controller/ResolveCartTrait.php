@@ -3,18 +3,23 @@
 namespace App\Cart\Application\Http\Controller;
 
 use App\Cart\Domain\CartId;
-use App\Cart\Domain\CartRepositoryInterface;
-use Symfony\Component\Security\Core\Security;
+use App\Cart\Domain\Port\CartRepositoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 trait ResolveCartTrait
 {
-    abstract protected function getSecurity(): Security;
+    abstract protected function getTokenStorage(): TokenStorageInterface;
 
     abstract protected function getCartRepository(): CartRepositoryInterface;
 
-    private function getUserIdFromSecurity(): ?string
+    private function getUserIdFromTokenStorage(): ?string
     {
-        $user = $this->getSecurity()->getUser();
+        $token = $this->getTokenStorage()->getToken();
+        if (!$token) {
+            return null;
+        }
+
+        $user = $token->getUser();
         if (!$user) {
             return null;
         }
@@ -24,7 +29,7 @@ trait ResolveCartTrait
 
     private function resolveUserIdFromParamInternal(?string $cartId): string
     {
-        $authUserId = $this->getUserIdFromSecurity();
+        $authUserId = $this->getUserIdFromTokenStorage();
 
         if (!$cartId || 'me' === $cartId || 'current' === $cartId) {
             if (!$authUserId) {

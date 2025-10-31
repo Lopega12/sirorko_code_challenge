@@ -3,7 +3,7 @@
 namespace App\Cart\Application\Handler;
 
 use App\Cart\Application\Command\CheckoutCartCommand;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Order\Domain\Order;
 use App\Order\Domain\OrderId;
 use App\Order\Domain\OrderRepositoryInterface;

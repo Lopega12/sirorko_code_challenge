@@ -2,34 +2,26 @@
 
 namespace App\Cart\Application\Http\Controller;
 
-use App\Cart\Domain\CartId;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Application\Exception\CartNotFoundException;
+use App\Cart\Application\Exception\InvalidCartIdException;
+use App\Cart\Application\Exception\UnauthorizedCartAccessException;
+use App\Cart\Application\Service\CartResolver;
+use App\Cart\Application\Service\CartSerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 
+#[AsController]
 final class GetCartController
 {
-    use ResolveCartTrait;
+    private CartResolver $resolver;
+    private CartSerializer $serializer;
 
-    private Security $security;
-    private CartRepositoryInterface $cartRepository;
-
-    public function __construct(Security $security, CartRepositoryInterface $cartRepository)
+    public function __construct(CartResolver $resolver, CartSerializer $serializer)
     {
-        $this->security = $security;
-        $this->cartRepository = $cartRepository;
-    }
-
-    protected function getSecurity(): Security
-    {
-        return $this->security;
-    }
-
-    protected function getCartRepository(): CartRepositoryInterface
-    {
-        return $this->cartRepository;
+        $this->resolver = $resolver;
+        $this->serializer = $serializer;
     }
 
     public function __invoke(Request $request): JsonResponse
@@ -37,32 +29,21 @@ final class GetCartController
         $cartId = $request->attributes->get('cartId') ?? $request->query->get('cart_id');
 
         try {
-            if (!$cartId || 'me' === $cartId || 'current' === $cartId) {
-                $userId = $this->getUserIdFromSecurity();
-                if (!$userId) {
-                    return new JsonResponse(['items' => [], 'total' => 0]);
-                }
+            $resolved = $this->resolver->resolve($cartId);
+            $cart = $resolved['cart'];
 
-                $cart = $this->cartRepository->findByUserId($userId);
-            } else {
-                $cart = $this->cartRepository->get(CartId::fromString($cartId));
+            return new JsonResponse($this->serializer->serializeCart($cart));
+        } catch (InvalidCartIdException $e) {
+            return new JsonResponse(['error' => 'invalid_cart_id'], Response::HTTP_BAD_REQUEST);
+        } catch (CartNotFoundException $e) {
+            return new JsonResponse(['error' => 'cart_not_found'], Response::HTTP_NOT_FOUND);
+        } catch (UnauthorizedCartAccessException $e) {
+            $msg = $e->getMessage();
+            if ('forbidden' === $msg) {
+                return new JsonResponse(['error' => 'forbidden'], Response::HTTP_FORBIDDEN);
             }
 
-            if (!$cart) {
-                return new JsonResponse(['items' => [], 'total' => 0]);
-            }
-
-            $items = array_map(function ($i) {
-                return [
-                    'product_id' => (string) $i->productId(),
-                    'name' => $i->name(),
-                    'price' => $i->price()->toFloat(),
-                    'quantity' => $i->quantity(),
-                    'total' => $i->total()->toFloat(),
-                ];
-            }, $cart->items());
-
-            return new JsonResponse(['items' => $items, 'total' => $cart->total()->toFloat()]);
+            return new JsonResponse(['error' => 'unauthenticated'], Response::HTTP_UNAUTHORIZED);
         } catch (\Throwable $e) {
             return new JsonResponse(['error' => 'internal_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

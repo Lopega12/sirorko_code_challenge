@@ -1,6 +1,9 @@
 <?php
 
-namespace App\Cart\Domain;
+namespace App\Cart\Domain\Port;
+
+use App\Cart\Domain\Cart;
+use App\Cart\Domain\CartId;
 
 interface CartRepositoryInterface
 {

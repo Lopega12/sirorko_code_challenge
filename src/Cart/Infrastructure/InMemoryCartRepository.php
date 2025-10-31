@@ -4,7 +4,7 @@ namespace App\Cart\Infrastructure;
 
 use App\Cart\Domain\Cart;
 use App\Cart\Domain\CartId;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 
 final class InMemoryCartRepository implements CartRepositoryInterface
 {

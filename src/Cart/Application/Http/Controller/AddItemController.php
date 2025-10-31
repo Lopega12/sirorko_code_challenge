@@ -4,31 +4,33 @@ namespace App\Cart\Application\Http\Controller;
 
 use App\Cart\Application\Command\AddItemToCartCommand;
 use App\Cart\Application\Handler\AddItemToCartHandler;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Cart\Domain\ProductId;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+#[AsController]
 final class AddItemController
 {
     use ResolveCartTrait;
 
     private AddItemToCartHandler $handler;
-    private Security $security;
+    private TokenStorageInterface $tokenStorage;
     private CartRepositoryInterface $cartRepository;
 
-    public function __construct(AddItemToCartHandler $handler, Security $security, CartRepositoryInterface $cartRepository)
+    public function __construct(AddItemToCartHandler $handler, TokenStorageInterface $tokenStorage, CartRepositoryInterface $cartRepository)
     {
         $this->handler = $handler;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
         $this->cartRepository = $cartRepository;
     }
 
-    protected function getSecurity(): Security
+    protected function getTokenStorage(): TokenStorageInterface
     {
-        return $this->security;
+        return $this->tokenStorage;
     }
 
     protected function getCartRepository(): CartRepositoryInterface
@@ -69,9 +71,8 @@ final class AddItemController
                 return new JsonResponse(['error' => $msg], Response::HTTP_FORBIDDEN);
             }
 
-            return new JsonResponse(['error' => 'internal_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Throwable $e) {
-            return new JsonResponse(['error' => 'internal_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(['error' => 'internal_error', 'message' => $msg],
+                Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

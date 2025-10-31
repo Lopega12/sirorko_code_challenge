@@ -5,7 +5,8 @@ namespace App\Cart\Application\Handler;
 use App\Cart\Application\Command\AddItemToCartCommand;
 use App\Cart\Domain\Cart;
 use App\Cart\Domain\CartItem;
-use App\Cart\Domain\CartRepositoryInterface;
+use App\Cart\Domain\Money;
+use App\Cart\Domain\Port\CartRepositoryInterface;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
 
 final class AddItemToCartHandler
@@ -34,7 +35,7 @@ final class AddItemToCartHandler
             $product->getName(),
             // product domain returns Money object (Product ValueObject)
             // Cart uses its own Money VO; convert via cents/float
-            \App\Cart\Domain\Money::fromFloat($product->getPrice()->amount()),
+            Money::fromFloat($product->getPrice()->amount()),
             $command->quantity
         );
 
