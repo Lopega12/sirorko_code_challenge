@@ -25,7 +25,4 @@ cart_routes:
     type: php
     prefix: /api/cart
 
-order_routes:
-    resource: ../src/Order/routes.php
-    type: php
 

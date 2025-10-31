@@ -163,14 +163,14 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testCannotProcessOrderTwice(): void
     {
-        // Arrange
+
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PROCESSING);
 
-        // Act & Assert
+
         $this->expectException(\DomainException::class);
         $order->markAsProcessing();
     }

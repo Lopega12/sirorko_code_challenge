@@ -92,7 +92,12 @@ final class CartFactory extends PersistentObjectFactory
 
     protected function initialize(): static
     {
-        return $this;
+        return $this
+            // Decirle a Foundry que no intente hidratar estos atributos
+            ->beforeInstantiate(function(array $attributes): array {
+                unset($attributes['itemsSpec']);
+                return $attributes;
+            });
     }
 
     /**

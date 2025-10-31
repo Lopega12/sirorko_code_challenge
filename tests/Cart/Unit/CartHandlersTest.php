@@ -17,6 +17,8 @@ use App\Cart\Application\Handler\CheckoutCartHandler;
 use App\Order\Infrastructure\InMemoryOrderRepository;
 use App\Product\Infrastructure\Repository\InMemoryProductRepository;
 use App\Product\Domain\Entity\Product;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Envelope;
 
 final class CartHandlersTest extends TestCase
 {
@@ -26,10 +28,18 @@ final class CartHandlersTest extends TestCase
         $orderRepo = new InMemoryOrderRepository();
         $productRepo = new InMemoryProductRepository();
 
+        // Stub simple del MessageBus que retorna un Envelope
+        $messageBus = new class implements MessageBusInterface {
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                return new Envelope($message, $stamps);
+            }
+        };
+
         $addHandler = new AddItemToCartHandler($cartRepo, $productRepo);
         $updateHandler = new UpdateItemQuantityHandler($cartRepo);
         $removeHandler = new RemoveItemFromCartHandler($cartRepo);
-        $checkoutHandler = new CheckoutCartHandler($cartRepo, $orderRepo);
+        $checkoutHandler = new CheckoutCartHandler($cartRepo, $orderRepo, $messageBus);
 
         $userId = 'user-1';
         $productId1 = ProductId::fromString('prod-1');
