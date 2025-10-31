@@ -19,3 +19,8 @@ product_routes:
     resource: ../src/Product/routes.php
     type: php
     prefix: /api/products
+
+cart_routes:
+    resource: ../src/Cart/routes.php
+    type: php
+    prefix: /api/cart
