@@ -60,8 +60,6 @@ final class CheckoutCartController
             }
 
             return new JsonResponse(['error' => 'internal_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Throwable $e) {
-            return new JsonResponse(['error' => 'internal_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

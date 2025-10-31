@@ -1,0 +1,12 @@
+framework:
+  messenger:
+    transports:
+      async: '%env(MESSENGER_TRANSPORT_DSN)%'
+      failed: 'sync://'
+    routing:
+      # Routing handled by #[AsMessage] attributes
+    failure_transport: failed
+
+# Optional failed transport
+services:
+  # default middleware is fine

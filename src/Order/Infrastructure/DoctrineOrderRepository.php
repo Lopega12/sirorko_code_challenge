@@ -23,15 +23,42 @@ final class DoctrineOrderRepository implements DomainOrderRepositoryInterface
 
     public function save(DomainOrder $order): void
     {
-        $entity = new OrderEntity((string) $order->id(), (string) $order->cartId(), $order->total()->toFloat());
+        $entity = $this->em->find(OrderEntity::class, (string) $order->id());
 
-        foreach ($order->items() as $i) {
-            $itemEntity = new OrderItemEntity($entity, (string) $i->productId(), $i->name(), $i->price()->toFloat(), $i->quantity());
-            $entity->addItem($itemEntity);
-            $this->em->persist($itemEntity);
+        if ($entity) {
+            // Actualizar orden existente
+            $entity->setStatus($order->status()->value);
+            if ($order->paymentReference()) {
+                $entity->setPaymentReference($order->paymentReference());
+            }
+        } else {
+            // Crear nueva orden
+            $entity = new OrderEntity(
+                (string) $order->id(),
+                (string) $order->cartId(),
+                $order->total()->toFloat(),
+                $order->status()->value
+            );
+
+            if ($order->paymentReference()) {
+                $entity->setPaymentReference($order->paymentReference());
+            }
+
+            foreach ($order->items() as $i) {
+                $itemEntity = new OrderItemEntity(
+                    $entity,
+                    (string) $i->productId(),
+                    $i->name(),
+                    $i->price()->toFloat(),
+                    $i->quantity()
+                );
+                $entity->addItem($itemEntity);
+                $this->em->persist($itemEntity);
+            }
+
+            $this->em->persist($entity);
         }
 
-        $this->em->persist($entity);
         $this->em->flush();
     }
 
@@ -52,6 +79,13 @@ final class DoctrineOrderRepository implements DomainOrderRepositoryInterface
             );
         }
 
-        return new DomainOrder(DomainOrderId::fromString($entity->getId()), \App\Cart\Domain\CartId::fromString($entity->getCartId()), $items, CartMoney::fromFloat($entity->getTotal()));
+        return new DomainOrder(
+            DomainOrderId::fromString($entity->getId()),
+            \App\Cart\Domain\CartId::fromString($entity->getCartId()),
+            $items,
+            CartMoney::fromFloat($entity->getTotal()),
+            \App\Order\Domain\OrderStatus::from($entity->getStatus()),
+            $entity->getPaymentReference()
+        );
     }
 }

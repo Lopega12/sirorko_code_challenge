@@ -26,15 +26,25 @@ final class OrderEntity
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private string $total;
 
+    #[ORM\Column(type: 'string', length: 50)]
+    private string $status;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $paymentReference = null;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    public function __construct(string $id, string $cartId, float $total)
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct(string $id, string $cartId, float $total, string $status = 'pending')
     {
         $this->id = $id;
         $this->cartId = $cartId;
         $this->items = new ArrayCollection();
         $this->total = (string) round($total, 2);
+        $this->status = $status;
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -62,5 +72,63 @@ final class OrderEntity
     public function getTotal(): float
     {
         return (float) $this->total;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getPaymentReference(): ?string
+    {
+        return $this->paymentReference;
+    }
+
+    public function setPaymentReference(?string $paymentReference): void
+    {
+        $this->paymentReference = $paymentReference;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function markAsProcessing(): void
+    {
+        $this->setStatus('processing');
+    }
+
+    public function markAsPaid(string $paymentReference): void
+    {
+        $this->setStatus('paid');
+        $this->setPaymentReference($paymentReference);
+    }
+
+    public function markAsPaymentFailed(): void
+    {
+        $this->setStatus('payment_failed');
+    }
+
+    public function markAsCompleted(): void
+    {
+        $this->setStatus('completed');
+    }
+
+    public function markAsCancelled(): void
+    {
+        $this->setStatus('cancelled');
     }
 }
