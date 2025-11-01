@@ -32,4 +32,10 @@ final class UserRepository extends ServiceEntityRepository
     {
         return $this->findOneByEmail($identifier);
     }
+
+    public function save(User $user): void
+    {
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
 }

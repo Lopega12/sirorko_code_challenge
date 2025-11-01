@@ -3,6 +3,7 @@
 namespace App\Auth\Application\Http\Controller;
 
 use App\Auth\Application\Security\TokenRevokerInterface;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,20 @@ final class LogoutController
     {
     }
 
+    #[OA\Post(
+        path: '/api/logout',
+        summary: 'Logout de usuario',
+        description: 'Cierra la sesión del usuario y revoca el token JWT',
+        security: [['bearerAuth' => []]],
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: 'Logout exitoso',
+            ),
+            new OA\Response(response: 401, description: 'No autenticado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $session = $request->getSession();

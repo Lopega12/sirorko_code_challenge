@@ -18,8 +18,8 @@ final class LoginRateLimiter
     }
 
     /**
-     * Consume tokens for a given key and return the RateLimit result.
-     * Key should be unique per client (e.g. ip or email).
+     * Consumir tokens para una clave dada y retornar el resultado de RateLimit.
+     * La clave debe ser única por cliente (ej: ip o email).
      */
     public function consumeByKey(string $key, int $tokens = 1): RateLimit
     {
@@ -29,7 +29,7 @@ final class LoginRateLimiter
     }
 
     /**
-     * Convenience method to consume tokens using the request (by IP).
+     * Método de conveniencia para consumir tokens usando la petición (por IP).
      */
     public function consumeRequest(Request $request, int $tokens = 1): RateLimit
     {
@@ -39,7 +39,7 @@ final class LoginRateLimiter
     }
 
     /**
-     * Try to reset limiter state for a key if the limiter implementation supports it.
+     * Intentar resetear el estado del limitador para una clave si la implementación lo soporta.
      */
     public function resetKey(string $key): void
     {

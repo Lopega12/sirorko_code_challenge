@@ -3,6 +3,7 @@
 namespace App\Product\Application\Http\Controller;
 
 use App\Product\Application\Service\ProductService;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,46 @@ final class CreateProductController
     }
 
     #[IsGranted('ROLE_ADMIN')]
+    #[OA\Post(
+        path: '/api/products/',
+        summary: 'Crear un nuevo producto',
+        description: 'Crea un nuevo producto en el catálogo (solo administradores)',
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['sku', 'name', 'price', 'currency'],
+                properties: [
+                    new OA\Property(property: 'sku', type: 'string', example: 'SKU-001'),
+                    new OA\Property(property: 'name', type: 'string', example: 'Producto Ejemplo'),
+                    new OA\Property(property: 'price', type: 'number', format: 'float', example: 99.99),
+                    new OA\Property(property: 'currency', type: 'string', example: 'EUR'),
+                    new OA\Property(property: 'stock', type: 'integer', example: 100),
+                    new OA\Property(property: 'description', type: 'string', example: 'Descripción del producto', nullable: true),
+                ]
+            )
+        ),
+        tags: ['Products'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Producto creado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'id', type: 'string', example: 'prod-123'),
+                        new OA\Property(property: 'sku', type: 'string', example: 'SKU-001'),
+                        new OA\Property(property: 'name', type: 'string', example: 'Producto Ejemplo'),
+                        new OA\Property(property: 'price', type: 'number', format: 'float', example: 99.99),
+                        new OA\Property(property: 'currency', type: 'string', example: 'EUR'),
+                        new OA\Property(property: 'stock', type: 'integer', example: 100),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: 'Datos inválidos'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'Acceso denegado (requiere ROLE_ADMIN)'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent() ?: '{}', true);

@@ -2,9 +2,18 @@ nelmio_api_doc:
     documentation:
         info:
             title: Siroko Cart & Checkout API
+            description: API para gestión de carrito de compras, productos, órdenes y autenticación
             version: 1.0.0
         servers:
             - url: http://localhost:8080
+              description: Servidor de desarrollo
+        components:
+            securitySchemes:
+                bearerAuth:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                    description: 'JWT Authorization header usando el esquema Bearer. Ejemplo: "Authorization: Bearer {token}"'
     areas:
         host_patterns: # document only routes with a host of the form api.*
             []

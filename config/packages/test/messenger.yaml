@@ -1,0 +1,8 @@
+framework:
+  messenger:
+    transports:
+      async: 'sync://'
+      failed: 'sync://'
+    routing:
+#      'App\\Message\\Order\\OrderProcessCartMessage': async
+    failure_transport: failed

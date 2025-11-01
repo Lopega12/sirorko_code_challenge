@@ -23,7 +23,7 @@ final class Product
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    // store price as decimal
+    // Almacenar precio como decimal
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private string $price;
 
