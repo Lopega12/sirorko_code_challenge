@@ -260,14 +260,38 @@ cd siroko_code_challenge
 ```
 
 ### 2. Configurar Variables de Entorno
-```bash
-# Copiar el archivo de ejemplo y configurar variables
-cp .env.example .env
-
-# Editar .env con tus configuraciones (base de datos, JWT secret, etc.)
-```
 
 El proyecto incluye un archivo `.env.example` con todas las variables de entorno necesarias comentadas y documentadas.
+
+**Necesitas crear los siguientes archivos de configuración:**
+
+```bash
+# Para desarrollo local
+cp .env.example .env.local
+
+# Para testing
+cp .env.example .env.test
+
+# Para entorno de desarrollo con Docker
+cp .env.example .env.dev
+```
+
+**📌 Credenciales de Base de Datos por Defecto:**
+- **Usuario**: `cart`
+- **Password**: `cart`
+- **Base de datos**: `cart_db`
+
+Estas credenciales están configuradas en el `docker-compose.yml` y deben coincidir con las variables de entorno en tus archivos `.env.*`:
+
+```env
+# En .env.local o .env.dev
+DATABASE_URL="mysql://cart:cart@localhost:3306/cart_db?serverVersion=8.0&charset=utf8mb4"
+
+# En .env.test (usa SQLite para tests)
+DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"
+```
+
+> **💡 Nota**: El archivo `.env.example` contiene todas las variables necesarias con valores de ejemplo. Asegúrate de configurar correctamente el `JWT_SECRET_KEY` y otros parámetros sensibles en tus archivos de entorno locales.
 
 ### 3. Levantar el Entorno con Docker Compose
 ```bash
