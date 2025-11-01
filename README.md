@@ -259,7 +259,17 @@ git clone <repository-url>
 cd siroko_code_challenge
 ```
 
-### 2. Levantar el Entorno con Docker Compose
+### 2. Configurar Variables de Entorno
+```bash
+# Copiar el archivo de ejemplo y configurar variables
+cp .env.example .env
+
+# Editar .env con tus configuraciones (base de datos, JWT secret, etc.)
+```
+
+El proyecto incluye un archivo `.env.example` con todas las variables de entorno necesarias comentadas y documentadas.
+
+### 3. Levantar el Entorno con Docker Compose
 ```bash
 make up
 ```
@@ -269,17 +279,17 @@ Esto levantará:
 - **Nginx** (puerto 8080)
 - **MySQL** (puerto 3306)
 
-### 3. Instalar Dependencias (si es necesario)
+### 4. Instalar Dependencias (si es necesario)
 ```bash
 make composer
 ```
 
-### 4. Ejecutar Migraciones
+### 5. Ejecutar Migraciones
 ```bash
 make migrate
 ```
 
-### 5. Crear Usuarios de Prueba (Opcional)
+### 6. Crear Usuarios de Prueba (Opcional)
 ```bash
 # Usuario normal
 docker exec siroko_code_challenge_php bin/console app:create-user user@example.com password123
@@ -288,7 +298,7 @@ docker exec siroko_code_challenge_php bin/console app:create-user user@example.c
 docker exec siroko_code_challenge_php bin/console app:create-user admin@example.com admin123 --admin
 ```
 
-### 6. Acceder a la Aplicación
+### 7. Acceder a la Aplicación
 
 - **API Base**: http://localhost:8080/api
 - **Swagger UI**: http://localhost:8080/api/doc
