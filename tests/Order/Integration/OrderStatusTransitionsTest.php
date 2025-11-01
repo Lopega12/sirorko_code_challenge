@@ -29,32 +29,32 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testOrderStartsAsPending(): void
     {
-        // Arrange
+        // Preparar
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total());
 
-        // Assert
+        // Verificar
         $this->assertTrue($order->status()->isPending());
         $this->assertEquals(OrderStatus::PENDING, $order->status());
     }
 
     public function testCanTransitionFromPendingToProcessing(): void
     {
-        // Arrange
+        // Preparar
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total());
 
-        // Act
+        // Actuar
         $order->markAsProcessing();
         $this->orderRepository->save($order);
 
-        // Assert
+        // Verificar
         $savedOrder = $this->orderRepository->get($orderId);
         $this->assertNotNull($savedOrder);
         $this->assertTrue($savedOrder->status()->isProcessing());
@@ -62,19 +62,17 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testCanTransitionFromProcessingToPaid(): void
     {
-        // Arrange
+        // Preparar
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PROCESSING);
-
-        // Act
         $paymentRef = 'payment_123';
         $order->markAsPaid($paymentRef);
         $this->orderRepository->save($order);
 
-        // Assert
+        // Verificar
         $savedOrder = $this->orderRepository->get($orderId);
         $this->assertNotNull($savedOrder);
         $this->assertTrue($savedOrder->status()->isPaid());
@@ -83,18 +81,15 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testCanTransitionFromProcessingToPaymentFailed(): void
     {
-        // Arrange
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PROCESSING);
 
-        // Act
         $order->markAsPaymentFailed();
         $this->orderRepository->save($order);
 
-        // Assert
         $savedOrder = $this->orderRepository->get($orderId);
         $this->assertNotNull($savedOrder);
         $this->assertTrue($savedOrder->status()->hasPaymentFailed());
@@ -102,18 +97,15 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testCanTransitionFromPaidToCompleted(): void
     {
-        // Arrange
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PAID, 'payment_123');
 
-        // Act
         $order->markAsCompleted();
         $this->orderRepository->save($order);
 
-        // Assert
         $savedOrder = $this->orderRepository->get($orderId);
         $this->assertNotNull($savedOrder);
         $this->assertTrue($savedOrder->status()->isCompleted());
@@ -121,42 +113,39 @@ class OrderStatusTransitionsTest extends KernelTestCase
 
     public function testCannotMarkAsPaidFromPending(): void
     {
-        // Arrange
+
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PENDING);
 
-        // Act & Assert
         $this->expectException(\DomainException::class);
         $order->markAsPaid('payment_123');
     }
 
     public function testCannotMarkAsPaymentFailedFromPending(): void
     {
-        // Arrange
+
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PENDING);
 
-        // Act & Assert
+
         $this->expectException(\DomainException::class);
         $order->markAsPaymentFailed();
     }
 
     public function testCannotMarkAsCompletedFromPending(): void
     {
-        // Arrange
         $cart = $this->createCartWithItems('user-123');
         $this->cartRepository->save($cart);
 
         $orderId = OrderId::generate();
         $order = new Order($orderId, $cart->id(), $cart->items(), $cart->total(), OrderStatus::PENDING);
 
-        // Act & Assert
         $this->expectException(\DomainException::class);
         $order->markAsCompleted();
     }

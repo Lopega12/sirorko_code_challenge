@@ -22,7 +22,7 @@ abstract class BaseWebTestCase extends WebTestCase
 
     public static function setUpBeforeClass(): void
     {
-        // Boot the kernel to get the container without using createClient() (avoids conflicts with Foundry)
+        // Iniciar el kernel para obtener el contenedor sin usar createClient() (evita conflictos con Foundry)
         static::bootKernel();
 
         // Get container and doctrine
@@ -43,7 +43,7 @@ abstract class BaseWebTestCase extends WebTestCase
             }
             $tool->createSchema($metadata);
         }
-        // shutdown kernel so createClient() can be called safely in each test
+        // Apagar el kernel para que createClient() pueda ser llamado de forma segura en cada test
         static::ensureKernelShutdown();
     }
 
@@ -73,7 +73,7 @@ abstract class BaseWebTestCase extends WebTestCase
      */
     protected function createAuthenticatedClient(bool $isAdmin = true): KernelBrowser
     {
-        // Ensure kernel is shutdown before creating the client — Foundry may have booted it in a before-hook
+        // Asegurar que el kernel está apagado antes de crear el cliente — Foundry puede haberlo iniciado en un hook
         static::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
@@ -85,7 +85,7 @@ abstract class BaseWebTestCase extends WebTestCase
             'roles' => [$role],
         ]);
 
-        // If a JwtTokenGenerator service exists, use it to create a token and set Authorization header
+        // Si existe el servicio JwtTokenGenerator, usarlo para crear un token y establecer el header Authorization
         $jwtServiceId = \App\Auth\Application\Security\JwtTokenGenerator::class;
         $userId = $user->getId();
         if ($container->has($jwtServiceId)) {
@@ -101,7 +101,7 @@ abstract class BaseWebTestCase extends WebTestCase
             return $client;
         }
 
-        // Final fallback to session login (useful if tests run in stateful mode)
+        // Fallback final a login por sesión (útil si los tests se ejecutan en modo stateful)
         $client->loginUser($user);
         return $client;
     }

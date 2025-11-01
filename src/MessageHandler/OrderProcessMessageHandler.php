@@ -21,10 +21,10 @@ final class OrderProcessMessageHandler
     {
         $orderId = $message->orderId();
 
-        // Simulate processing: log and mark job processed if exists
+        // Simular procesamiento: registrar y marcar trabajo como procesado si existe
         $this->logger->info('Processing order', ['order_id' => $orderId]);
 
-        // Optionally update order_jobs table if exists
+        // Opcionalmente actualizar tabla order_jobs si existe
         $qb = $this->em->createQueryBuilder();
         $res = $qb->select('j')
             ->from('App\\Order\\Infrastructure\\Entity\\OrderJob', 'j')

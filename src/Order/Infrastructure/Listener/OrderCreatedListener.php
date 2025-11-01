@@ -20,7 +20,7 @@ final class OrderCreatedListener
 
     public function __invoke(OrderCreated $event): void
     {
-        // Create a lightweight job record for later processing (fictitious processing)
+        // Crear un registro de trabajo ligero para procesamiento posterior (procesamiento ficticio)
         $job = new OrderJob((string) $event->orderId());
         $this->em->persist($job);
         $this->em->flush();

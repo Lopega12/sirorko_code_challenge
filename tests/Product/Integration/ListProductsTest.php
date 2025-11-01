@@ -20,7 +20,7 @@ final class ListProductsTest extends BaseWebTestCase
 
     public function testCreateProductAndFindItInList(): void
     {
-        // Create a product directly using the factory (fast)
+        // Crear un producto directamente usando la factory (rápido)
         $product = ProductFactory::createOne([
             'sku' => 'list-find-'.uniqid(),
             'name' => 'List Find Product',
@@ -39,7 +39,7 @@ final class ListProductsTest extends BaseWebTestCase
         $this->assertIsArray($list);
 
         $ids = array_column($list, 'id');
-        // Use assertContainsEquals to avoid PHPUnit deprecation for array membership
+        // Usar assertContainsEquals para evitar deprecación de PHPUnit para pertenencia a array
         $this->assertContainsEquals($createdId, $ids, 'Created product should appear in list');
     }
 

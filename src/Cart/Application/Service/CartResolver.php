@@ -21,12 +21,12 @@ final class CartResolver
     }
 
     /**
-     *  Resuelve el carrito basado en el ID proporcionado,o el carrito del usuario autenticado si no se proporciona un ID explícito.
+     * Resuelve el carrito basado en el ID proporcionado, o el carrito del usuario autenticado si no se proporciona un ID explícito.
      *
      * @return array<mixed>
      *
      * @throws invalidCartIdException, CartNotFoundException, UnauthorizedCartAccessException
-     * Throws exceptions for invalid id / not found / unauthorized
+     * Lanza excepciones para ID inválido / no encontrado / no autorizado
      */
     public function resolve(?string $cartId): array
     {
