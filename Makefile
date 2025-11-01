@@ -20,7 +20,7 @@ bash:
 	docker exec -it siroko_code_challenge_php  /bin/bash
 
 composer:
-	docker compose run --rm siroko_code_challenge_php composer install
+	docker exec -it siroko_code_challenge_php composer install
 
 
 migrate:
@@ -28,7 +28,7 @@ migrate:
 
 
 fixtures:
-	docker compose exec siroko_code_challenge_php php bin/console doctrine:fixtures:load -n || true
+	docker exec -it siroko_code_challenge_php php bin/console doctrine:fixtures:load -n || true
 
 
 test:
